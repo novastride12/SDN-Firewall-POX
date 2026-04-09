@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-The aim of this project is to implement a Software Defined Networking (SDN) based firewall that can control communication between hosts. The firewall should block or allow traffic based on defined rules and also maintain logs of blocked packets.
+The aim of this project is to implement a Software Defined Networking (SDN) based firewall that can control communication between hosts. The firewall should block or allow traffic based on defined rules and maintain logs of blocked packets.
 
 ---
 
@@ -17,16 +17,16 @@ The aim of this project is to implement a Software Defined Networking (SDN) base
 
 ## Working
 
-In SDN, the control plane is separated from the data plane, and a centralized controller is responsible for making decisions.
+In SDN, the control plane is separated from the data plane, and a centralized controller makes decisions about traffic.
 
-In this project, the POX controller listens for incoming packets (PacketIn events). Based on the defined rule, it decides whether to allow or block the packet.
+In this project, the POX controller listens for PacketIn events. It checks the source IP address of incoming packets and applies filtering rules.
 
-The rule implemented is simple:
-
-* Traffic coming from host h1 is blocked
+* Traffic from IP **10.0.0.1 (h1)** is blocked
 * Traffic between other hosts is allowed
 
-Whenever a packet is blocked, a message is printed in the controller terminal.
+Additionally, the controller installs a **drop rule in the switch using OpenFlow**, so repeated packets are blocked directly at the switch without involving the controller.
+
+Blocked packets are logged in the controller terminal.
 
 ---
 
@@ -38,7 +38,7 @@ Command:
 h1 ping -c 3 h2
 
 Result:
-The packets are not delivered and show "Destination Host Unreachable" with 100% packet loss.
+Packets are not delivered and show "Destination Host Unreachable" with 100% packet loss.
 
 ---
 
@@ -48,30 +48,20 @@ Command:
 h2 ping -c 3 h3
 
 Result:
-The communication is successful with 0% packet loss.
-
----
-
-## Screenshots
-
-The following screenshots are included in the repository:
-
-* blocked.png (shows blocked communication)
-* allowed.png (shows successful communication)
-* logs.png (shows controller logs)
+Communication is successful with 0% packet loss.
 
 ---
 
 ## Steps to Run
 
-1. Start the POX controller:
+1. Start POX controller:
    cd pox
    ./pox.py firewall
 
 2. Start Mininet:
    sudo mn --topo single,3 --controller remote
 
-3. Test the network:
+3. Test:
    h1 ping -c 3 h2
    h2 ping -c 3 h3
 
@@ -81,19 +71,20 @@ The following screenshots are included in the repository:
 
 * Traffic from h1 is blocked
 * Traffic between other hosts is allowed
+* Drop rules are installed in the switch
 * Logs are displayed in the controller terminal
 
 ---
 
 ## Conclusion
 
-This project shows how SDN can be used to control network traffic using a centralized controller. A simple firewall was implemented using POX to block and allow communication between hosts.
+This project demonstrates how SDN can be used to control network traffic using a centralized controller. A firewall was implemented using IP-based filtering and OpenFlow rules to efficiently block unwanted traffic.
 
 ---
 
 ## Future Scope
 
-* Implement IP-based filtering
-* Add MAC address filtering
-* Store logs in a file
-* Extend to more complex firewall rules
+* MAC-based filtering
+* Port-based filtering
+* Logging to file
+* Advanced firewall rules
