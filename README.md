@@ -85,6 +85,5 @@ This project demonstrates how SDN can be used to control network traffic using a
 ## Future Scope
 
 * MAC-based filtering
-* Port-based filtering
 * Logging to file
 * Advanced firewall rules
